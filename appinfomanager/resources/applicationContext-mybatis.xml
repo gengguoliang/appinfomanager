@@ -71,4 +71,6 @@
     	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>  
     	<property name="basePackage" value="cn.aim.dao"/>
     </bean>
+    <!--配置扫描注解定义的业务Bean  -->
+    <context:component-scan base-package="cn.aim.service"/>
 </beans>
