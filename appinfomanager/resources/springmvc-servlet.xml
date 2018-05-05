@@ -12,7 +12,7 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
      <!-- 扫描controller（controller层注入） -->
-    <context:component-scan base-package="cn.smbms.controller"/> 
+    <context:component-scan base-package="cn.aim.controller"/> 
 	<!--配置消息转换器  -->
 	<mvc:annotation-driven>
 		<mvc:message-converters>
@@ -33,14 +33,14 @@
 				<property name="features">
 					<list>
 						<!--输出Date的日期转换器  -->
-						<value>WriteDateUserDateFormat</value>
+						<value>WriteDateUseDateFormat</value>
 					</list>
 				</property>
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 	<!--配置静态文件访问  -->
-	<mvc:resources location="/statics/**" mapping="/statics/"/>
+	<mvc:resources location="/statics/" mapping="/statics/**"/>
 	<!--配置MultipartResolver,用于上传文件，使用spring的CommonsMultipartResolver  -->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="5000000"/>
@@ -60,7 +60,7 @@
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-					<property name="prefix" value="/WEB-INF/jsp"/>
+					<property name="prefix" value="/WEB-INF/jsp/"/>
 					<property name="suffix" value=".jsp"/>
 				</bean>
 			</list>

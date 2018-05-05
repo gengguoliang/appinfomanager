@@ -49,7 +49,7 @@
     	<!--定义切入点  -->
     	<aop:pointcut expression="execution(* *cn.aim.service..*(..))" id="transService"/>
     	<!--将事物增强与切入点组合  -->
-    	<aop:advisor advice-ref="transactionManager" pointcut-ref="transService"/>
+    	<aop:advisor advice-ref="txAdvice" pointcut-ref="transService"/>
     </aop:config>
     <!--通过此标签为指定事务管理器设置事物属性  -->
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
