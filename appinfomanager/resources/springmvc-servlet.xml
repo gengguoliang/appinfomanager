@@ -69,10 +69,16 @@
 	<!--配置拦截器  -->
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<!--要拦截的请求  -->
-			<mvc:mapping path="sys/**"/>
-			<!--自定义拦截器  -->
+			<!-- 要拦截的请求  -->
+			<mvc:mapping path="/dev/sys/**"/>
+			<!-- 自定义拦截器  -->
 			<bean class="cn.aim.interceptor.SysInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<!-- 要拦截的请求  -->
+			<mvc:mapping path="/manager/sys/**"/>
+			<!-- 自定义拦截器  -->
+			<bean class="cn.aim.interceptor.BackInterceptor"/>
 		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>

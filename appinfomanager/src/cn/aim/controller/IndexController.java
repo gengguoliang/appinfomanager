@@ -14,7 +14,7 @@ public class IndexController {
 	 * 后台页面跳转
 	 * @return
 	 */
-	@RequestMapping(value="/manager/login",method=RequestMethod.GET)
+	@RequestMapping(value="/backlogin",method=RequestMethod.GET)
 	public String backendLogin() {
 		return "backendlogin";
 	}
@@ -22,7 +22,7 @@ public class IndexController {
 	 * 开发者页面跳转
 	 * @return
 	 */
-	@RequestMapping(value="/dev/login",method=RequestMethod.GET)
+	@RequestMapping(value="/devlogin",method=RequestMethod.GET)
 	public String devLogin() {
 		return "devlogin";
 	}

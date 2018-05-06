@@ -3,4 +3,9 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.aim.dao.f_user.DevUserMapper">
+	<!--登录  -->
+	<select id="getDevUserLogin" resultType="DevUser">
+		SELECT * FROM dev_user
+		WHERE devCode=#{devCode} AND devPassWord=#{devPassword}
+	</select>
 </mapper>

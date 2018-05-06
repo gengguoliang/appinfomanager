@@ -4,6 +4,17 @@ package cn.aim.dao.l_user;
  * @author gengguoliang
  *
  */
-public interface BackUserMapper {
 
+import org.apache.ibatis.annotations.Param;
+
+import cn.aim.pojo.BackendUser;
+
+public interface BackUserMapper {
+	/**
+	 * 登录
+	 * @param userCode
+	 * @param userPassword
+	 * @return
+	 */
+	public BackendUser getLoginBackendUser(@Param("userCode")String userCode,@Param("userPassword")String userPassword);
 }
