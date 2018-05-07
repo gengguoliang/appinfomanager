@@ -2,4 +2,57 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.aim.dao.info.InfoMapper"></mapper>
+<mapper namespace="cn.aim.dao.info.InfoMapper">
+	<!--获取总记录数或带条件获取记录数  -->
+	<select id="getAppInfoCount" resultType="int">
+		SELECT
+		  COUNT(1)
+		FROM app_info a
+		<where>
+			<if test="softwareName != null and softwareName != ''">AND a.softwareName LIKE CONCAT('%',#{softwareName},'%')</if>
+			<if test="status!=null">AND a.status = #{status}</if>
+			<if test="flatformId!=null">AND a.flatformId = #{flatformId}</if>
+			<if test="categoryLevel1!=null">AND a.categoryLevel1 = #{categoryLevel1}</if>
+			<if test="categoryLevel2!=null">AND a.categoryLevel2 = #{categoryLevel2}</if>
+			<if test="categoryLevel3!=null">AND a.categoryLevel3 = #{categoryLevel3}</if>
+		</where>
+	</select>
+	
+	<!--分页查询app信息或带条件查询  -->
+	<select id="getAllAppInfo" resultType="AppInfo">
+		SELECT
+		  a.*,
+		  (SELECT
+		     valueName
+		   FROM data_dictionary
+		   WHERE typeCode = "APP_STATUS"
+		       AND a.status = data_dictionary.valueId) AS statusName,
+		  (SELECT
+		     valueName
+		   FROM data_dictionary
+		   WHERE typeCode = "APP_FLATFORM"
+		       AND a.flatformId = data_dictionary.valueId) AS flatformName,
+		  (SELECT
+		     categoryName
+		   FROM app_category
+		   WHERE a.categoryLevel1 = app_category.id) AS categoryLevel1Name,
+		  (SELECT
+		     categoryName
+		   FROM app_category
+		   WHERE a.categoryLevel2 = app_category.id) AS categoryLevel2Name,
+		  (SELECT
+		     categoryName
+		   FROM app_category
+		   WHERE a.categoryLevel3 = app_category.id) AS categoryLevel3Name
+		FROM app_info a
+		<where>
+			<if test="softwareName != null and softwareName != ''">AND a.softwareName LIKE CONCAT('%',#{softwareName},'%')</if>
+			<if test="status!=null">AND a.status = #{status}</if>
+			<if test="flatformId!=null">AND a.flatformId = #{flatformId}</if>
+			<if test="categoryLevel1!=null">AND a.categoryLevel1 = #{categoryLevel1}</if>
+			<if test="categoryLevel2!=null">AND a.categoryLevel2 = #{categoryLevel2}</if>
+			<if test="categoryLevel3!=null">AND a.categoryLevel3 = #{categoryLevel3}</if>
+		</where>
+		LIMIT #{from},#{pageSize}
+	</select>
+</mapper>

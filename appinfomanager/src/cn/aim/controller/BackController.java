@@ -53,4 +53,15 @@ public class BackController {
 	public String devMain() {
 		return "backend/main";
 	}
+	/**
+	 * 退出登录
+	 * 清除session
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value="/logout",method=RequestMethod.GET)
+	public String appLogout(HttpSession session) {
+		session.removeAttribute(Constants.BACKUSER_SESSION);
+		return "redirect:/backlogin";
+	}
 }

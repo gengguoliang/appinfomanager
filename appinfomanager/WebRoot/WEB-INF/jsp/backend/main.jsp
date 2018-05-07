@@ -11,5 +11,5 @@
 	</div>
 </div>
 <div class="clearfix"></div>        
-<%@include file="common/footer.jsp" %>  
+<%@include file="common/footer.jsp"%>  
      

@@ -70,7 +70,7 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<!-- 要拦截的请求  -->
-			<mvc:mapping path="/dev/sys/**"/>
+			<mvc:mapping path="/dev/sys/flatform/**"/>
 			<!-- 自定义拦截器  -->
 			<bean class="cn.aim.interceptor.SysInterceptor"/>
 		</mvc:interceptor>

@@ -3,4 +3,8 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.aim.dao.dictionary.DictionaryMapper">
+	<!--查詢分类信息  -->
+	<select id="getAllDictionary" resultType="DataDictionary">
+		SELECT * FROM data_dictionary WHERE typeCode=#{typeCode}
+	</select>
 </mapper>
