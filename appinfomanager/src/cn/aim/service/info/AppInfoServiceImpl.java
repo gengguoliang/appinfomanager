@@ -24,4 +24,9 @@ public class AppInfoServiceImpl implements AppInfoService {
 		return infoMapper.getAllAppInfo(softwareName, status, flatformId, categoryLevel1, categoryLevel2, categoryLevel3, currentPageNo, pageSize);
 	}
 
+	@Override
+	public AppInfo APKNameExist(String APKName) {
+		return infoMapper.APKNameExist(APKName);
+	}
+
 }

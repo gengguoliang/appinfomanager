@@ -45,4 +45,10 @@ public interface InfoMapper {
 									   @Param("categoryLevel3")Integer categoryLevel3,
 									   @Param("from")Integer currentPageNo,
 									   @Param("pageSize")Integer pageSize);
+	/**
+	 * 验证APKName是否存在
+	 * @param APKName
+	 * @return
+	 */
+	public AppInfo APKNameExist(@Param("APKName")String APKName);
 }

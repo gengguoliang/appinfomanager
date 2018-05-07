@@ -55,4 +55,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</where>
 		LIMIT #{from},#{pageSize}
 	</select>
+	<!--查询APKName是否存在  -->
+	<select id="APKNameExist" resultType="AppInfo">
+		SELECT * FROM app_info WHERE APKName=#{APKName}
+	</select>
 </mapper>

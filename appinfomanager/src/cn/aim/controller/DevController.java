@@ -5,7 +5,9 @@ package cn.aim.controller;
  *
  */
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -148,8 +150,17 @@ public class DevController {
 		this.commList(model, softwareName, status, flatformId, categoryLevel1, categoryLevel2, categoryLevel3, currentPageNo);
 		return "developer/appinfolist";
 	}
-	
-	
+	/**
+	 * 异步查询所属平台
+	 * @return
+	 */
+	@RequestMapping(value="/datadictionarylist.json",method=RequestMethod.GET)
+	@ResponseBody
+	public Object FlatForm() {
+		//查询所属平台
+		List<DataDictionary>flatFormList=dictionaryService.getAllDictionary(Constants.APP_FLATFORM);
+		return JSONArray.toJSONString(flatFormList);
+	}
 	
 	/**
 	 * 子集联动
@@ -159,7 +170,12 @@ public class DevController {
 	@RequestMapping(value="/categorylevellist.json",method=RequestMethod.GET)
 	@ResponseBody
 	public Object appSonList(@RequestParam(value="pid")Integer parentId) {
-		List<AppCategory>list=categoryService.findCategory(parentId);		
+		List<AppCategory>list=null;
+		if(parentId!=null) {
+			list=categoryService.findCategory(parentId);
+		}else {//查询一级
+			list=categoryService.findCategory1();
+		}
 		return JSONArray.toJSONString(list);
 	}
 	/**
@@ -172,5 +188,33 @@ public class DevController {
 	public String appLogout(HttpSession session) {
 		session.removeAttribute(Constants.DEVUSER_SESSION);
 		return "redirect:/devlogin";
+	}
+	/**
+	 * 添加页面
+	 * @return
+	 */
+	@RequestMapping(value="/flatform/app/appinfoadd")
+	public String appAdd() {
+		return "developer/appinfoadd";
+	}
+	/**
+	 * 验证APKName是否存在
+	 * @param APKName
+	 * @return
+	 */
+	@RequestMapping(value="/apkexist.json")
+	@ResponseBody
+	public Object ApkNameExist(@RequestParam(value="APKName") String APKName) {
+		Map<String , String>APKMap=new HashMap<String,String>();
+		if(APKName==null||APKName=="") {
+			APKMap.put("APKName", "empty");
+		}
+		AppInfo appInfo=appInfoService.APKNameExist(APKName);
+		if(appInfo!=null) {
+			APKMap.put("APKName", "exist");
+		}else {
+			APKMap.put("APKName", "noexist");
+		}
+		return APKMap;
 	}
 }

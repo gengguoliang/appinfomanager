@@ -39,4 +39,10 @@ public interface AppInfoService {
 							Integer flatformId,Integer categoryLevel1,
 							Integer categoryLevel2,Integer categoryLevel3,
 							Integer currentPageNo,Integer pageSize);
+	/**
+	 * 验证APKName是否存在
+	 * @param APKName
+	 * @return
+	 */
+	public AppInfo APKNameExist(String APKName);
 }
