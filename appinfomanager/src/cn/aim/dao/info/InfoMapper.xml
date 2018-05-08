@@ -43,7 +43,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		  (SELECT
 		     categoryName
 		   FROM app_category
-		   WHERE a.categoryLevel3 = app_category.id) AS categoryLevel3Name
+		   WHERE a.categoryLevel3 = app_category.id) AS categoryLevel3Name,
+		   (SELECT versionNo FROM app_version WHERE a.versionId=app_version.id) AS versionNo
 		FROM app_info a
 		<where>
 			<if test="softwareName != null and softwareName != ''">AND a.softwareName LIKE CONCAT('%',#{softwareName},'%')</if>
@@ -59,4 +60,60 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="APKNameExist" resultType="AppInfo">
 		SELECT * FROM app_info WHERE APKName=#{APKName}
 	</select>
+	<!--根据id查询appInfo信息  -->
+	<select id="getAppInfoById" resultType="AppInfo">
+		SELECT
+		  a.*,
+		  (SELECT
+		     valueName
+		   FROM data_dictionary
+		   WHERE typeCode = "APP_STATUS"
+		       AND a.status = data_dictionary.valueId) AS statusName
+		FROM app_info a
+		  WHERE a.id=#{appInfoId}
+	</select>
+	<!--新增APPInfo  -->
+	<insert id="AppInfoAdd" parameterType="AppInfo">
+		INSERT INTO app_info (softwareName,APKName,supportROM,interfaceLanguage,softwareSize,updateDate,devId,
+		appInfo,`status`,onSaleDate,offSaleDate,flatformId,categoryLevel3,downloads,createdBy,
+		creationDate,modifyBy,categoryLevel1,categoryLevel2,logoPicPath,logoLocPath,versionId)
+		values
+		(#{softwareName},#{APKName},#{supportROM},#{interfaceLanguage},#{softwareSize},#{updateDate},#{devId},
+		#{appInfo},#{status},#{onSaleDate},#{offSaleDate},#{flatformId},#{categoryLevel3},#{downloads},#{createdBy},
+		#{creationDate},#{modifyBy},#{categoryLevel1},#{categoryLevel2},#{logoPicPath},#{logoLocPath},#{versionId})
+	</insert>
+	<!--更新appInfo  -->
+	<update id="AppInfoModify" parameterType="AppInfo">
+		UPDATE app_info
+		<set>
+			<if test="softwareName!=null">softwareName=#{softwareName},</if>
+			<if test="APKName!=null">APKName=#{APKName},</if>
+			<if test="supportROM!=null">supportROM=#{supportROM},</if>
+			<if test="interfaceLanguage!=null">interfaceLanguage=#{interfaceLanguage},</if>
+			<if test="softwareSize!=null">softwareSize=#{softwareSize},</if>
+			<if test="updateDate!=null">updateDate=#{updateDate},</if>
+			<if test="devId!=null">devId=#{devId},</if>
+			<if test="appInfo!=null">appInfo=#{appInfo},</if>
+			<if test="status!=null">`status`=#{status},</if>
+			<if test="onSaleDate!=null">onSaleDate=#{onSaleDate},</if>
+			<if test="offSaleDate!=null">offSaleDate=#{offSaleDate},</if>
+			<if test="flatformId!=null">flatformId=#{flatformId},</if>
+			<if test="categoryLevel3!=null">categoryLevel3=#{categoryLevel3},</if>
+			<if test="downloads!=null">downloads=#{downloads},</if>
+			<if test="createdBy!=null">createdBy=#{createdBy},</if>
+			<if test="creationDate!=null">creationDate=#{creationDate},</if>
+			<if test="modifyBy!=null">modifyBy=#{modifyBy},</if>
+			<if test="modifyDate!=null">modifyDate=#{modifyDate},</if>
+			<if test="categoryLevel1!=null">categoryLevel1=#{categoryLevel1},</if>
+			<if test="categoryLevel2!=null">categoryLevel2=#{categoryLevel2},</if>
+			<if test="logoPicPath!=null">logoPicPath=#{logoPicPath},</if>
+			<if test="logoLocPath!=null">logoLocPath=#{logoLocPath},</if>
+			<if test="versionId!=null">versionId=#{versionId},</if>
+		</set>
+		where id=#{id}
+	</update>
+	<!--  根据id移除图片路径-->
+	<update id="AppInfoLogoPath" parameterType="Integer">
+		UPDATE app_info SET logoPicPath="" WHERE id=#{id}
+	</update>
 </mapper>

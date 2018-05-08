@@ -45,4 +45,28 @@ public interface AppInfoService {
 	 * @return
 	 */
 	public AppInfo APKNameExist(String APKName);
+	/**
+	 * 新增appInfo信息
+	 * @param appInfo
+	 * @return
+	 */
+	public boolean appInfoAdd(AppInfo appInfo);
+	/**
+	 * 根据id查询appInfo信息
+	 * @param appInfoId
+	 * @return
+	 */
+	public List<AppInfo> findAppInfoById(Integer appInfoId);
+	/**
+	 * 更新appinfo
+	 * @param appInfo
+	 * @return
+	 */
+	public boolean AppInfomodify(AppInfo appInfo);
+	/**
+	 * 根据id移除图片路径
+	 * @param id
+	 * @return
+	 */
+	public boolean APpInfoDelPath(Integer id);
 }

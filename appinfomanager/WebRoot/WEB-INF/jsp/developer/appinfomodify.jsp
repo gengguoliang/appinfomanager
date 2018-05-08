@@ -10,7 +10,8 @@
              <div class="clearfix"></div>
       </div>
       <div class="x_content">
-        <form class="form-horizontal form-label-left" action="appinfomodifysave" method="post" enctype="multipart/form-data">
+        <form class="form-horizontal form-label-left" action="${pageContext.request.contextPath }/dev/appinfomodifysave" method="post" enctype="multipart/form-data">
+        <c:forEach var="appInfo" items="${appInfo}">
           <input type="hidden" name="id" id="id" value="${appInfo.id}">
           <div class="item form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">软件名称 <span class="required">*</span>
@@ -140,6 +141,7 @@
               <br/><br/>
             </div>
           </div>
+          </c:forEach>
         </form>
       </div>
     </div>

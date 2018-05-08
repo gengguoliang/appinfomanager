@@ -51,4 +51,28 @@ public interface InfoMapper {
 	 * @return
 	 */
 	public AppInfo APKNameExist(@Param("APKName")String APKName);
+	/**
+	 * 新增appInfo
+	 * @param appInfo
+	 * @return
+	 */
+	public int AppInfoAdd(AppInfo appInfo);
+	/**
+	 * 根据id查询appInfo信息
+	 * @param appInfoId
+	 * @return
+	 */
+	public List<AppInfo> getAppInfoById(@Param("appInfoId") Integer appInfoId);
+	/**
+	 * 更新appInfo
+	 * @param appInfo
+	 * @return
+	 */
+	public int AppInfoModify(AppInfo appInfo);
+	/**
+	 * 根据id移除图片路径
+	 * @param id
+	 * @return
+	 */
+	public int AppInfoLogoPath(@Param("id")Integer id);
 }

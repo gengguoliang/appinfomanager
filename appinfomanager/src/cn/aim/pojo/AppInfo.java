@@ -7,25 +7,32 @@ import java.util.Date;
  * @author gengguoliang
  *
  */
+
+import org.springframework.format.annotation.DateTimeFormat;
 public class AppInfo {
 	private Integer id;//主键id
 	private String softwareName;//软件名称
 	private String APKName;//APK名称
 	private String supportROM;//支持ROM
 	private String interfaceLanguage;//界面语言
+	@DateTimeFormat(pattern="yyyy-MM-DD")
 	private Date updateDate;//更新日期
 	private BigDecimal softwareSize;//软件大小（单位：M）
 	private Integer devId;//开发者id
 	private String appInfo;//应用简介
 	private Integer status;//app状态id
+	@DateTimeFormat(pattern="yyyy-MM-DD")
 	private Date onSaleDate;//上架时间
+	@DateTimeFormat(pattern="yyyy-MM-DD")
 	private Date offSaleDate;//下架时间
 	private Integer categoryLevel3;//所属三级分类id
 	private Integer downloads;//下载量（单位：次）
 	private Integer flatformId;//app所属平台id
 	private Integer createdBy;//创建者
+	@DateTimeFormat(pattern="yyyy-MM-DD")
 	private Date creationDate;//创建时间
 	private Integer modifyBy;//更新者
+	@DateTimeFormat(pattern="yyyy-MM-DD")
 	private Date modifyDate;//更新时间
 	
 	private String statusName;//app状态名称

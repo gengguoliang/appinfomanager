@@ -5,6 +5,9 @@ package cn.aim.controller;
  *
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +15,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -216,5 +222,177 @@ public class DevController {
 			APKMap.put("APKName", "noexist");
 		}
 		return APKMap;
+	}
+	/**
+	 * AppInfo新增
+	 * @param appInfo
+	 * @param session
+	 * @param attach
+	 * @return
+	 */
+	@RequestMapping(value="/appinfoaddsave")
+	public String AppInfoAdd(AppInfo appInfo,HttpSession session,Model model,
+					@RequestParam(value="a_logoPicPath",required=false) MultipartFile attach) {
+		String logoPicPath=null;
+		//判断文件是否为空
+		if(!attach.isEmpty()) {
+			//上传路径
+			String path="D:"+File.separator+"upload";
+			logger.info("uploadfile path==============>"+path);
+			String oldFileName=attach.getOriginalFilename();//原文件名
+			logger.info("uploadfile oldfileName==================>"+oldFileName);
+			String prefix=FilenameUtils.getExtension(oldFileName);//获取原文件后缀
+			logger.debug("upploadfile prefix==========>"+prefix);
+			int fileSize=50000;
+			logger.debug("uploadFile size================>"+attach.getSize());
+			if(attach.getSize()>fileSize) {//上传大小不能超过50k
+				model.addAttribute("fileUploadError", "上传文件的大小不能超过50k");
+				return "developer/appinfoadd";
+			}else if(prefix.equalsIgnoreCase("jpg")
+					||prefix.equalsIgnoreCase("png")
+					||prefix.equalsIgnoreCase("jpeg")){
+				//指定图片名字
+				String fileName=System.currentTimeMillis()+RandomUtils.nextInt(1000000)+"logo.jpg";
+				logger.debug("new fileName========"+attach.getName());
+				File targetFile=new File(path,fileName);
+				if(!targetFile.exists()) {//判断文件地址是否存在如果不存在则创建
+					targetFile.mkdirs();
+				}
+				try {
+					//将图片保存到指定的路径中
+					attach.transferTo(targetFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+					model.addAttribute("fileUploadError", "*上传文件失败");
+					return "developer/appinfoadd";
+				}
+				logoPicPath=fileName;
+			}else {
+				model.addAttribute("fileUploadError", "*上传图片的格式不正确");
+				return "developer/appinfoadd";
+			}
+		}
+		int devId=((DevUser)session.getAttribute(Constants.DEVUSER_SESSION)).getId();
+		appInfo.setDevId(devId);
+		//获取创建者id
+		appInfo.setCreatedBy(devId);
+		//获取创建时间
+		appInfo.setCreationDate(new Date());
+		//获取上传的图片名字
+		appInfo.setLogoPicPath(logoPicPath);
+		if(appInfoService.appInfoAdd(appInfo)) {
+			return "redirect:/dev/flatform/app/list";
+		}
+		return "developer/appinfoadd";
+	}
+	/**
+	 * 跳转到修改app基础信息页面
+	 * @param appinfoid
+	 * @return
+	 */
+	@RequestMapping(value="/flatform/app/appinfomodify")
+	public String appInfoModif(@RequestParam(value="id",required=false)Integer appInfoId,Model model) {
+		logger.debug("appInfoId===============>"+appInfoId);
+		//根据ID获取appInfo信息
+		List<AppInfo> appInfo=appInfoService.findAppInfoById(appInfoId);
+		model.addAttribute("appInfo", appInfo);
+		logger.debug("appInfo=================>"+appInfo);
+		return "developer/appinfomodify";
+	}
+	/**
+	 * 删除指定文件
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/delfile.json")
+	@ResponseBody
+	public Object delFile(@RequestParam("id")Integer id) {
+		Map<String, String>result=new HashMap<String,String>();
+		//根据id获取文件名字
+		List<AppInfo> appInfo=appInfoService.findAppInfoById(id);
+		String fileName="";
+		for (AppInfo appInfo2 : appInfo) {
+			fileName=appInfo2.getLogoPicPath();
+		}
+		//文件路径
+		String path="D:"+File.separator+"upload"+File.separator+fileName;
+		File file=new File(path);
+		// 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+		if(file.exists()) {
+			if(file.delete()) {
+				if(appInfoService.APpInfoDelPath(id)) {
+					logger.debug("<=============图片路径等新成功============>");
+				}
+				result.put("result", "success");
+			}else {
+				result.put("result", "failed");
+			}
+		}
+		return result;
+	}
+	/**
+	 * 更新appInfo
+	 * @param appInfo
+	 * @param session
+	 * @param model
+	 * @param attach
+	 * @return
+	 */
+	@RequestMapping(value="/appinfomodifysave")
+	public String appInfoModifySave(AppInfo appInfo,HttpSession session,Model model,
+			@RequestParam(value="attach",required=false) MultipartFile attach) {
+		String logoPicPath=null;
+		//判断文件是否为空
+		if(!attach.isEmpty()) {
+			//上传路径
+			String path="D:"+File.separator+"upload";
+			logger.info("uploadfile path==============>"+path);
+			String oldFileName=attach.getOriginalFilename();//原文件名
+			logger.info("uploadfile oldfileName==================>"+oldFileName);
+			String prefix=FilenameUtils.getExtension(oldFileName);//获取原文件后缀
+			logger.debug("upploadfile prefix==========>"+prefix);
+			int fileSize=50000;
+			logger.debug("uploadFile size================>"+attach.getSize());
+			if(attach.getSize()>fileSize) {//上传大小不能超过50k
+				model.addAttribute("fileUploadError", "上传文件的大小不能超过50k");
+				return "developer/appinfoadd";
+			}else if(prefix.equalsIgnoreCase("jpg")
+					||prefix.equalsIgnoreCase("png")
+					||prefix.equalsIgnoreCase("jpeg")){
+				//指定图片名字
+				String fileName=System.currentTimeMillis()+RandomUtils.nextInt(1000000)+"logo.jpg";
+				logger.debug("new fileName========"+attach.getName());
+				File targetFile=new File(path,fileName);
+				if(!targetFile.exists()) {//判断文件地址是否存在如果不存在则创建
+					targetFile.mkdirs();
+				}
+				try {
+					//将图片保存到指定的路径中
+					attach.transferTo(targetFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+					model.addAttribute("fileUploadError", "*上传文件失败");
+					return "developer/appinfoadd";
+				}
+				logoPicPath=fileName;
+			}else {
+				model.addAttribute("fileUploadError", "*上传图片的格式不正确");
+				return "developer/appinfoadd";
+			}
+		}
+		/**
+		 * 获取修改者id
+		 */
+		int modifyId=((DevUser)session.getAttribute(Constants.DEVUSER_SESSION)).getId();
+		appInfo.setModifyBy(modifyId);
+		appInfo.setModifyDate(new Date());
+		appInfo.setUpdateDate(new Date());
+		if(logoPicPath!=null) {
+			appInfo.setLogoPicPath(logoPicPath);
+		}
+		if(appInfoService.AppInfomodify(appInfo)) {
+			return "redirect:/dev/flatform/app/list";
+		}
+		return "developer/appinfomodify";
 	}
 }

@@ -29,4 +29,39 @@ public class AppInfoServiceImpl implements AppInfoService {
 		return infoMapper.APKNameExist(APKName);
 	}
 
+	@Override
+	public boolean appInfoAdd(AppInfo appInfo) {
+		int num=infoMapper.AppInfoAdd(appInfo);
+		if(num>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public List<AppInfo> findAppInfoById(Integer appInfoId) {
+		return infoMapper.getAppInfoById(appInfoId);
+	}
+
+	@Override
+	public boolean AppInfomodify(AppInfo appInfo) {
+		int num=infoMapper.AppInfoModify(appInfo);
+		if(num>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean APpInfoDelPath(Integer id) {
+		int num=infoMapper.AppInfoLogoPath(id);
+		if(num>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
 }
