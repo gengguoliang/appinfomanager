@@ -2,6 +2,8 @@ package cn.aim.service.info;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.aim.pojo.AppInfo;
 
 /**
@@ -69,4 +71,11 @@ public interface AppInfoService {
 	 * @return
 	 */
 	public boolean APpInfoDelPath(Integer id);
+	/**
+	 * 根据id更新app版本信息
+	 * @param id
+	 * @param versionId
+	 * @return
+	 */
+	public boolean UpdAppInfoVersionId(Integer id,Integer versionId);
 }

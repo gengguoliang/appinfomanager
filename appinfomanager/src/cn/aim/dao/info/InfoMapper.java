@@ -75,4 +75,11 @@ public interface InfoMapper {
 	 * @return
 	 */
 	public int AppInfoLogoPath(@Param("id")Integer id);
+	/**
+	 * 根据id更新app版本信息
+	 * @param id
+	 * @param versionId
+	 * @return
+	 */
+	public int AppInfoVersionId(@Param("id")Integer id,@Param("versionId") Integer versionId);
 }

@@ -54,6 +54,7 @@
     <!--通过此标签为指定事务管理器设置事物属性  -->
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
     	<tx:attributes>
+    		<tx:method name="find*" propagation="SUPPORTS" rollback-for="Exception"/>
     		<tx:method name="*" propagation="REQUIRED" rollback-for="Exception"/>
     	</tx:attributes>
     </tx:advice>

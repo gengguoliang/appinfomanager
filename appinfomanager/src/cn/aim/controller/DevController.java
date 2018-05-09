@@ -30,14 +30,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 
+import cn.aim.dao.version.VersionMapper;
 import cn.aim.pojo.AppCategory;
 import cn.aim.pojo.AppInfo;
+import cn.aim.pojo.AppVersion;
 import cn.aim.pojo.DataDictionary;
 import cn.aim.pojo.DevUser;
 import cn.aim.service.category.CategoryService;
 import cn.aim.service.devuser.DevUserService;
 import cn.aim.service.dictionary.DictionaryService;
 import cn.aim.service.info.AppInfoService;
+import cn.aim.service.version.VersionService;
 import cn.aim.tools.Constants;
 import cn.aim.tools.PageSupport;
 @Controller
@@ -52,6 +55,8 @@ public class DevController {
 	private DictionaryService dictionaryService;
 	@Resource
 	private AppInfoService appInfoService;
+	@Resource
+	private VersionService versionService;
 	/**
 	 * 登录
 	 * @param devCode
@@ -233,7 +238,10 @@ public class DevController {
 	@RequestMapping(value="/appinfoaddsave")
 	public String AppInfoAdd(AppInfo appInfo,HttpSession session,Model model,
 					@RequestParam(value="a_logoPicPath",required=false) MultipartFile attach) {
+		//文件名
 		String logoPicPath=null;
+		//实际地址
+		String apkLocPath=null;
 		//判断文件是否为空
 		if(!attach.isEmpty()) {
 			//上传路径
@@ -394,5 +402,87 @@ public class DevController {
 			return "redirect:/dev/flatform/app/list";
 		}
 		return "developer/appinfomodify";
+	}
+	/**
+	 * 跳转到新增APP管理页面
+	 * 并且查询历史版本
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/appversionadd")
+	public String appInfoVersion(@RequestParam(value="id")Integer id,Model model) {
+		logger.debug("appId===================>"+id);
+		List<AppVersion>list=versionService.findAppVersion(id);
+		model.addAttribute("appVersionList", list);
+		model.addAttribute("appId", id);
+		return "developer/appversionadd";
+	}
+	/**
+	 * 新增App版本信息
+	 * @param appVersion
+	 * @return
+	 */
+	@RequestMapping(value="/addversionsave")
+	public String addVersionSave(HttpSession session,AppVersion appVersion,Model model,
+			@RequestParam(value="a_downloadLink",required=false)MultipartFile attach) {
+		String apkFileName=null;
+		String apkLocPath=null;
+		//判断文件是否为空
+		if(!attach.isEmpty()) {
+			//上传路径
+			String path="D:"+File.separator+"upload";
+			logger.info("uploadfile path==============>"+path);
+			String oldFileName=attach.getOriginalFilename();//原文件名
+			logger.info("uploadfile oldfileName==================>"+oldFileName);
+			String prefix=FilenameUtils.getExtension(oldFileName);//获取原文件后缀
+			logger.debug("upploadfile prefix==========>"+prefix);
+			//设定上传文件的大小为500M
+			int fileSize=500*1024*1024;
+			logger.debug("uploadFile size================>"+attach.getSize());
+			if(attach.getSize()>fileSize) {//上传大小不能超过500M
+				model.addAttribute("fileUploadError", "上传文件的大小不能超过500M");
+				return "developer/appversionadd";
+			}else if(prefix.equalsIgnoreCase("apk")){
+				//指定文件名字
+				String fileName=System.currentTimeMillis()+RandomUtils.nextInt(1000000)+"logo.apk";
+				logger.debug("new fileName========"+attach.getName());
+				File targetFile=new File(path,fileName);
+				if(!targetFile.exists()) {//判断文件地址是否存在如果不存在则创建
+					targetFile.mkdirs();
+				}
+				try {
+					//将文件保存到指定的路径中
+					attach.transferTo(targetFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+					model.addAttribute("fileUploadError", "*上传文件失败");
+					return "developer/appversionadd";
+				}
+				apkFileName=fileName;
+				apkLocPath=path+File.separator+fileName;
+			}else {
+				model.addAttribute("fileUploadError", "*上传文件的格式不正确");
+				return "developer/appversionadd";
+			}
+		}
+		String downloadLink=File.separator+"appinfomanager"+File.separator+"demo"+File.separator+"file"+File.separator+apkFileName;
+		logger.debug("downloadLink====================>"+downloadLink);
+		int createdBy=((DevUser)session.getAttribute(Constants.DEVUSER_SESSION)).getId();
+		logger.debug("appId===================>"+appVersion.getAppId());
+		appVersion.setCreatedBy(createdBy);
+		appVersion.setCreationDate(new Date());
+		appVersion.setApkLocPath(apkLocPath);
+		appVersion.setApkFileName(apkFileName);
+		appVersion.setDownloadLink(downloadLink);
+		if(versionService.addAppVersion(appVersion)) {
+			return "redirect:/dev/flatform/app/list";
+		}
+		return"developer/appversionadd";
+	}
+	@RequestMapping(value="/appversionmodify")
+	public String appVersionModify(@RequestParam(value="vid")Integer versionid,@RequestParam(value="aid")Integer appinfoid) {
+		logger.debug("versionid===============>"+versionid);
+		logger.debug("appinfoid================>"+appinfoid);
+		return "developer/appversionmodify";
 	}
 }

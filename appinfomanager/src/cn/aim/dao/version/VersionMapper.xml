@@ -3,4 +3,16 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.aim.dao.version.VersionMapper">
+	<!--查询版本信息  -->
+	<select id="getAppVersion" resultType="AppVersion">
+		SELECT a.*,b.softwareName AS appName,c.valueName AS publishStatusName FROM app_version a LEFT JOIN app_info b ON a.appId=b.id LEFT JOIN data_dictionary c ON a.publishStatus=c.valueId WHERE c.typeCode="PUBLISH_STATUS" AND a.appId =#{appId}
+	</select>
+	<select id="getAppVersionId" resultType="int">
+		SELECT id FROM app_version ORDER BY  creationDate DESC LIMIT 0,1
+	</select>
+	<insert id="getAddAppVersion" parameterType="AppVersion" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO app_version(appId,versionNo,versionInfo,publishStatus,downloadLink,versionSize,createdBy,creationDate,modifyBy,modifyDate,apkLocPath,apkFileName)
+		VALUES
+		(#{appId},#{versionNo},#{versionInfo},#{publishStatus},#{downloadLink},#{versionSize},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate},#{apkLocPath},#{apkFileName})
+	</insert>
 </mapper>

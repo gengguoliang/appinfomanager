@@ -116,4 +116,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="AppInfoLogoPath" parameterType="Integer">
 		UPDATE app_info SET logoPicPath="" WHERE id=#{id}
 	</update>
+	<!-- 根据id更新app版本信息 -->
+	<update id="AppInfoVersionId">
+		UPDATE app_info SET versionId = #{versionId} WHERE id =#{id}
+	</update>
 </mapper>

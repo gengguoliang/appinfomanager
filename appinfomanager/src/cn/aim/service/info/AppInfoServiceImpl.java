@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import cn.aim.dao.info.InfoMapper;
 import cn.aim.pojo.AppInfo;
+import cn.aim.service.version.VersionService;
 @Service
 public class AppInfoServiceImpl implements AppInfoService {
 	@Resource
@@ -59,6 +60,18 @@ public class AppInfoServiceImpl implements AppInfoService {
 		int num=infoMapper.AppInfoLogoPath(id);
 		if(num>0) {
 			return true;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean UpdAppInfoVersionId(Integer id, Integer versionId) {
+		int num=infoMapper.AppInfoVersionId(id, versionId);
+		if(num>0) {
+			return true;
+		}else if(num==0) {
+			return false;
 		}else {
 			return false;
 		}
