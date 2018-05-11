@@ -82,4 +82,48 @@ public interface InfoMapper {
 	 * @return
 	 */
 	public int AppInfoVersionId(@Param("id")Integer id,@Param("versionId") Integer versionId);
+	/**
+	 * 根据id删除app基础信息
+	 * @param id
+	 * @return
+	 */
+	public int delAppInfo(@Param("id") Integer id);
+	/**
+	 * 商品上下架
+	 * @param id
+	 * @return
+	 */
+	public int appInfoSale(@Param("id")Integer id,@Param("status")Integer status);
+	/* ===========================================后台===================================*/
+	/**
+	 * 获取总记录数或带条件的记录数
+	 * @param softwareName
+	 * @param flatformId
+	 * @param categoryLevel1
+	 * @param categoryLevel2
+	 * @param categoryLevel3
+	 * @return
+	 */
+	public int getAppInfoCounts(@Param("softwareName") String softwareName,
+			                   @Param("flatformId") Integer flatformId,
+			                   @Param("categoryLevel1")Integer categoryLevel1,
+			                   @Param("categoryLevel2")Integer categoryLevel2,
+			                   @Param("categoryLevel3")Integer categoryLevel3);
+	/**
+	 * 查询所有app信息或根据条件查询
+	 * @param softwareName
+	 * @param status
+	 * @param flatformId
+	 * @param categoryLevel1
+	 * @param categoryLevel2
+	 * @param categoryLevel3
+	 * @return
+	 */
+	public List<AppInfo> getAllAppInfos(@Param("softwareName") String softwareName,
+									   @Param("flatformId") Integer flatformId,
+									   @Param("categoryLevel1")Integer categoryLevel1,
+									   @Param("categoryLevel2")Integer categoryLevel2,
+									   @Param("categoryLevel3")Integer categoryLevel3,
+									   @Param("from")Integer currentPageNo,
+									   @Param("pageSize")Integer pageSize);
 }

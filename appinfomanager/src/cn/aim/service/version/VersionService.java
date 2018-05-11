@@ -23,4 +23,28 @@ public interface VersionService {
 	 * @return
 	 */
 	public int findAppVersionId();
+	/**
+	 * 根据id获取最新版本信息
+	 * @param id
+	 * @return
+	 */
+	public AppVersion findAppVersionInfo(Integer id);
+	/**
+	 * 修改最新版本信息
+	 * @param appVersion
+	 * @return
+	 */
+	public boolean updAppVersionInfo(AppVersion appVersion);
+	/**
+	 * 删除文件路径
+	 * @param id
+	 * @return
+	 */
+	public boolean updAppVersionPath(Integer id);
+	/**
+	 * 根据id删除
+	 * @param id
+	 * @return
+	 */
+	public boolean delAppVersion(Integer id);
 }

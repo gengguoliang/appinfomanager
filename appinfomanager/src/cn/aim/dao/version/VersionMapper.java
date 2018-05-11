@@ -29,4 +29,28 @@ public interface VersionMapper {
 	 * @return
 	 */
 	public int getAppVersionId();
+	/**
+	 * 根据id获取最新版本信息
+	 * @param id
+	 * @return
+	 */
+	public AppVersion getAppVersionInfo(@Param("id") Integer id);
+	/**
+	 * 修改最新版本信息
+	 * @param appVersion
+	 * @return
+	 */
+	public int updAppVersion(AppVersion appVersion);
+	/**
+	 * 删除文件路径
+	 * @param id
+	 * @return
+	 */
+	public int updAppVersionPath(@Param("id")Integer id);
+	/**
+	 * 根据appID删除所有历史版本
+	 * @param appId
+	 * @return
+	 */
+	public int delAppVersion(@Param("appId")Integer appId);
 }

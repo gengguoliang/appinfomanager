@@ -13,6 +13,8 @@ import cn.aim.service.version.VersionService;
 public class AppInfoServiceImpl implements AppInfoService {
 	@Resource
 	private InfoMapper infoMapper;
+	@Resource
+	private VersionService versionService;
 	@Override
 	public int findAppInfoCount(String softwareName, Integer status, Integer flatformId, Integer categoryLevel1,
 			Integer categoryLevel2, Integer categoryLevel3) {
@@ -75,6 +77,48 @@ public class AppInfoServiceImpl implements AppInfoService {
 		}else {
 			return false;
 		}
+	}
+
+	@Override
+	public boolean delAppInfo(Integer id) {
+		int num=infoMapper.delAppInfo(id);
+		if(num>0) {
+			if(versionService.delAppVersion(id)) {
+				return true;
+			}else {
+				return false;
+			}
+		}else if(num==0) {
+			return false;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean UpdSale(Integer id, Integer status) {
+		int num = infoMapper.appInfoSale(id, status);
+		if(num>0) {
+			return true;
+		}else if(num==0) {
+			return false;
+		}else {
+			return false;
+		}
+	}
+
+	
+	@Override
+	public int findAppInfoCounts(String softwareName, Integer flatformId, Integer categoryLevel1,
+			Integer categoryLevel2, Integer categoryLevel3) {
+		return infoMapper.getAppInfoCounts(softwareName, flatformId, categoryLevel1, categoryLevel2, categoryLevel3);
+	}
+
+	@Override
+	public List<AppInfo> findAppInfoLists(String softwareName, Integer flatformId, Integer categoryLevel1,
+			Integer categoryLevel2, Integer categoryLevel3, Integer currentPageNo, Integer pageSize) {
+		// TODO Auto-generated method stub
+		return infoMapper.getAllAppInfos(softwareName, flatformId, categoryLevel1, categoryLevel2, categoryLevel3, currentPageNo, pageSize);
 	}
 
 }

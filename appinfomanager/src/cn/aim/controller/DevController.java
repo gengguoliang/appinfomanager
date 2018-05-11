@@ -21,6 +21,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,7 @@ import cn.aim.service.info.AppInfoService;
 import cn.aim.service.version.VersionService;
 import cn.aim.tools.Constants;
 import cn.aim.tools.PageSupport;
+import jdk.nashorn.internal.ir.RuntimeNode.Request;
 @Controller
 @RequestMapping("/dev")
 public class DevController {
@@ -479,10 +481,182 @@ public class DevController {
 		}
 		return"developer/appversionadd";
 	}
+	/**
+	 * 跳转到修改页面
+	 * @param versionid
+	 * @param appinfoid
+	 * @return
+	 */
 	@RequestMapping(value="/appversionmodify")
-	public String appVersionModify(@RequestParam(value="vid")Integer versionid,@RequestParam(value="aid")Integer appinfoid) {
+	public String appVersionModify(@RequestParam(value="vid")Integer versionid,
+								@RequestParam(value="aid")Integer appinfoid,Model model) {
 		logger.debug("versionid===============>"+versionid);
 		logger.debug("appinfoid================>"+appinfoid);
+		//根据appid查询当前版本信息
+		List<AppVersion>list=versionService.findAppVersion(appinfoid);
+		model.addAttribute("appVersionList", list);
+		//根据versionId获取要修改版本的信息
+		AppVersion appVersionInfo=versionService.findAppVersionInfo(versionid);
+		model.addAttribute("appVersion", appVersionInfo);
 		return "developer/appversionmodify";
+	}
+	/**
+	 * 修改最新版本信息
+	 * @param appVersion
+	 * @param session
+	 * @param attach
+	 * @return
+	 */
+	@RequestMapping(value="/appversionmodifysave")
+	public String appVersionModifySave(AppVersion appVersion,HttpSession session,
+			@RequestParam(value="attach",required=false)MultipartFile attach,Model model) {
+		//文件名
+		String apkFileName=null;
+		//实际地址
+		String apkLocPath=null;
+		//服务器地址
+		String downloadLink=null;
+		//判断文件是否为空
+		if(!attach.isEmpty()) {
+			//上传路径
+			String path="D:"+File.separator+"upload";
+			logger.info("uploadfile path==============>"+path);
+			String oldFileName=attach.getOriginalFilename();//原文件名
+			logger.info("uploadfile oldfileName==================>"+oldFileName);
+			String prefix=FilenameUtils.getExtension(oldFileName);//获取原文件后缀
+			logger.debug("upploadfile prefix==========>"+prefix);
+			//设定上传文件的大小为500M
+			int fileSize=500*1024*1024;
+			logger.debug("uploadFile size================>"+attach.getSize());
+			if(attach.getSize()>fileSize) {//上传大小不能超过500M
+				model.addAttribute("fileUploadError", "上传文件的大小不能超过500M");
+				return "developer/appversionadd";
+			}else if(prefix.equalsIgnoreCase("apk")){
+				//指定文件名字
+				String fileName=System.currentTimeMillis()+RandomUtils.nextInt(1000000)+"logo.apk";
+				logger.debug("new fileName========"+attach.getName());
+				File targetFile=new File(path,fileName);
+				if(!targetFile.exists()) {//判断文件地址是否存在如果不存在则创建
+					targetFile.mkdirs();
+				}
+				try {
+					//将文件保存到指定的路径中
+					attach.transferTo(targetFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+					model.addAttribute("fileUploadError", "*上传文件失败");
+					return "developer/appversionadd";
+				}
+				apkFileName=fileName;
+				apkLocPath=path+File.separator+fileName;
+			}else {
+				model.addAttribute("fileUploadError", "*上传文件的格式不正确");
+				return "developer/appversionadd";
+			}
+		}
+		//服务器地址
+		if(apkFileName!=null) {
+			downloadLink=File.separator+"appinfomanager"+File.separator+"demo"+File.separator+"file"+File.separator+apkFileName;
+		}
+		logger.debug("downloadLink====================>"+downloadLink);
+		//获取修改者id
+		int modifyBy=((DevUser)session.getAttribute(Constants.DEVUSER_SESSION)).getId();
+		logger.debug("appId===================>"+appVersion.getAppId());
+		appVersion.setModifyBy(modifyBy);
+		//文件名
+		appVersion.setApkFileName(apkFileName);
+		//文件实际地址
+		appVersion.setApkLocPath(apkLocPath);
+		//文件服务器地址
+		appVersion.setDownloadLink(downloadLink);
+		//修改日期
+		appVersion.setModifyDate(new Date());
+		if(versionService.updAppVersionInfo(appVersion)) {
+			return "redirect:/dev/flatform/app/list";
+		}
+		return "developer/appversionmodifysave";
+	}
+	/**
+	 * 删除文件路径
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/delfile.json",method=RequestMethod.GET)
+	@ResponseBody
+	public Object delFileVersion(@RequestParam(value="id",required=false)Integer id) {
+		Map<String,String> result=new HashMap<String,String>();
+		logger.debug("id==================>"+id);
+		if(versionService.updAppVersionPath(id)) {
+			result.put("result","success");
+		}else {
+			result.put("result","failed");
+		}
+		return result;
+	}
+	/**
+	 * 跳转到查看页面
+	 * @param appId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/appview")
+	public String appView(@RequestParam("appId")Integer appId,Model model) {
+		//获取历史版本
+		List<AppVersion>list=versionService.findAppVersion(appId);
+		model.addAttribute("appVersionList", list);
+		//根据id获取基础信息
+		List<AppInfo> listInfo=appInfoService.findAppInfoById(appId);
+		for (AppInfo appInfo : listInfo) {
+			model.addAttribute("appInfo", appInfo);
+		}
+		return "developer/appinfoview";
+	}
+	/**
+	 * 根据id删除app基础信息
+	 * 并且删除当前APP所有历史版本
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/delapp.json")
+	@ResponseBody
+	public Object delApp(@RequestParam("id") Integer appId) {
+		logger.debug("appId====================>"+appId);
+		Map<String,String> delResult=new HashMap<String,String>();
+		if(appInfoService.delAppInfo(appId)) {
+			delResult.put("delResult", "true");
+		}else {
+			delResult.put("delResult", "false");
+		}
+		return delResult;
+	}
+	@RequestMapping(value="/sale.json",method=RequestMethod.PUT)
+	@ResponseBody
+	public Object Sale(@RequestParam("appId")Integer id) {
+		logger.debug("appId=====================>"+id);
+		List<AppInfo>lists=appInfoService.findAppInfoById(id);
+		Map<String,String> result=new HashMap<String,String>();
+		//当前状态
+		int status=0;
+		//要更新的状态
+		int statusupd=0;
+		for (AppInfo appInfo : lists) {
+			//获取当前状态
+			status=appInfo.getStatus();
+			logger.debug("status==================>"+status);
+		}
+		if(status==4) {
+			logger.debug("当前状态已上架");
+			statusupd=5;
+		}else if(status==5) {
+			logger.debug("当前状态已下架");
+			statusupd=4;
+		}
+		result.put("errorCode","0");
+		if(appInfoService.UpdSale(id, statusupd)) {			
+			result.put("resultMsg", "success");
+		}else {			
+			result.put("resultMsg", "failed");
+		}
+		return result;
 	}
 }

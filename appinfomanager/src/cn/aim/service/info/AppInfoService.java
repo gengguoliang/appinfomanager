@@ -78,4 +78,47 @@ public interface AppInfoService {
 	 * @return
 	 */
 	public boolean UpdAppInfoVersionId(Integer id,Integer versionId);
+	/**
+	 * 根据id删除APPInfo信息
+	 * @param id
+	 * @return
+	 */
+	public boolean delAppInfo(Integer id);
+	/**
+	 * 商品上下架
+	 * @param id
+	 * @param status
+	 * @return
+	 */
+	public boolean UpdSale(Integer id,Integer status);
+	/*=================================后台=====================================*/
+	/**
+	 * 获取总记录数或带条件的记录数
+	 * @param softwareName
+	 * @param status
+	 * @param flatformId
+	 * @param categoryLevel1
+	 * @param categoryLevel2
+	 * @param categoryLevel3
+	 * @return
+	 */
+	public int findAppInfoCounts(String softwareName,
+							Integer flatformId,Integer categoryLevel1,
+							Integer categoryLevel2,Integer categoryLevel3);
+	/**
+	 * 查询所有app信息或根据条件查询
+	 * @param softwareName
+	 * @param status
+	 * @param flatformId
+	 * @param categoryLevel1
+	 * @param categoryLevel2
+	 * @param categoryLevel3
+	 * @param currentPageNo
+	 * @param pageSize
+	 * @return
+	 */
+	public List<AppInfo> findAppInfoLists(String softwareName,
+							Integer flatformId,Integer categoryLevel1,
+							Integer categoryLevel2,Integer categoryLevel3,
+							Integer currentPageNo,Integer pageSize);
 }

@@ -1,9 +1,10 @@
+var path="/appinfomanager";
 $("#queryCategoryLevel1").change(function(){
 	var queryCategoryLevel1 = $("#queryCategoryLevel1").val();
 	if(queryCategoryLevel1 != '' && queryCategoryLevel1 != null){
 		$.ajax({
 			type:"GET",//请求类型
-			url:"categorylevellist.json",//请求的url
+			url:path+"/manager/categorylevellist.json",//请求的url
 			data:{pid:queryCategoryLevel1},//请求参数
 			dataType:"json",//ajax接口（请求url）返回的数据类型
 			success:function(data){//data：返回数据（json对象）
@@ -33,7 +34,7 @@ $("#queryCategoryLevel2").change(function(){
 	if(queryCategoryLevel2 != '' && queryCategoryLevel2 != null){
 		$.ajax({
 			type:"GET",//请求类型
-			url:"categorylevellist.json",//请求的url
+			url:path+"/manager/categorylevellist.json",//请求的url
 			data:{pid:queryCategoryLevel2},//请求参数
 			dataType:"json",//ajax接口（请求url）返回的数据类型
 			success:function(data){//data：返回数据（json对象）
@@ -62,7 +63,7 @@ $(".checkApp").on("click",function(){
 	var status = obj.attr("status");
 	var vid = obj.attr("versionid");
 	if(status == "1" && vid != "" && vid != null){//待审核状态下才可以进行审核操作
-		window.location.href="check?aid="+ obj.attr("appinfoid") + "&vid="+ obj.attr("versionid");
+		window.location.href=path+"/manager/check?aid="+ obj.attr("appinfoid") + "&vid="+ obj.attr("versionid");
 	}else if(vid != "" || vid != null){
 		alert("该APP应用没有上传最新版本,不能进行审核操作！");
 	}else if(status != "1"){

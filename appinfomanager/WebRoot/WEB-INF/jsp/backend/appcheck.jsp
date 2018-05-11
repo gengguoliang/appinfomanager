@@ -14,7 +14,7 @@
           <div class="clearfix"></div>
       </div>
       <div class="x_content1">
-        <form class="form-horizontal form-label-left" action="checksave" method="post">
+        <form class="form-horizontal form-label-left" action="${pageContext.request.contextPath }/manager/checksave" method="post">
           <input type="hidden" name="id" value="${appInfo.id}">
           <div class="item form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">软件名称 <span class="required">*</span>
@@ -107,7 +107,7 @@
 				    	暂无
 				  </c:when> 
 				  <c:otherwise>   
-				    <img src="${appInfo.logoPicPath }?m=1" width="100px;"/> 
+				    <img src="/demo/file/${appInfo.logoPicPath }?m=1" width="100px;"/> 
 				  </c:otherwise> 
               </c:choose> 
             </div>

@@ -10,9 +10,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getAppVersionId" resultType="int">
 		SELECT id FROM app_version ORDER BY  creationDate DESC LIMIT 0,1
 	</select>
+	<!--根据id获取最新版本信息  -->
+	<select id="getAppVersionInfo" resultType="AppVersion">
+		SELECT * FROM app_version where id=#{id}
+	</select>
 	<insert id="getAddAppVersion" parameterType="AppVersion" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO app_version(appId,versionNo,versionInfo,publishStatus,downloadLink,versionSize,createdBy,creationDate,modifyBy,modifyDate,apkLocPath,apkFileName)
 		VALUES
 		(#{appId},#{versionNo},#{versionInfo},#{publishStatus},#{downloadLink},#{versionSize},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate},#{apkLocPath},#{apkFileName})
 	</insert>
+	<!--修改最新版本信息  -->
+	<update id="updAppVersion">
+		UPDATE app_version
+		<set>
+			<if test="appId!=null">appId=#{appId},</if>
+			<if test="versionNo!=null">versionNo=#{versionNo},</if>
+			<if test="versionInfo!=null">versionInfo=#{versionInfo},</if>
+			<if test="publishStatus!=null">publishStatus=#{publishStatus},</if>
+			<if test="downloadLink!=null">downloadLink=#{downloadLink},</if>
+			<if test="versionSize!=null">versionSize=#{versionSize},</if>
+			<if test="createdBy!=null">createdBy=#{createdBy},</if>
+			<if test="creationDate!=null">creationDate=#{creationDate},</if>
+			<if test="modifyBy!=null">modifyBy=#{modifyBy},</if>
+			<if test="modifyDate!=null">modifyDate=#{modifyDate},</if>
+			<if test="apkLocPath!=null">apkLocPath=#{apkLocPath},</if>
+			<if test="apkFileName!=null">apkFileName=#{apkFileName},</if>
+		</set>
+		where id=#{id}
+	</update>
+	<!--根据id移除文件路径  -->
+	<update id="updAppVersionPath">
+		UPDATE app_version SET downloadLink="",apkLocPath="",apkFileName="" WHERE id=#{id}
+	</update>
+	<!--根据appID删除所有历史版本  -->
+	<delete id="delAppVersion">
+		DELETE FROM app_version WHERE appId=#{appId}
+	</delete>
 </mapper>

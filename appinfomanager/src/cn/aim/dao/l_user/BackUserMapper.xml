@@ -4,6 +4,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.aim.dao.l_user.BackUserMapper">
 	<select id="getLoginBackendUser" resultType="BackendUser">
-		SELECT * FROM backend_user WHERE userCode=#{userCode} AND userPassword=#{userPassword}
+		SELECT
+			  a.*,
+			  (SELECT
+			     valueName
+			   FROM data_dictionary
+			   WHERE typeCode = "USER_TYPE"
+			       AND a.userType = data_dictionary.valueId) AS userTypeName
+			FROM backend_user a
+			WHERE a.userCode = #{userCode}
+			    AND a.userPassword = #{userPassword}
 	</select>
 </mapper>

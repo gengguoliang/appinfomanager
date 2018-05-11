@@ -39,5 +39,42 @@ public class VersionServiceImpl implements VersionService {
 	public int findAppVersionId() {
 		return versionMapper.getAppVersionId();
 	}
+	@Override
+	public AppVersion findAppVersionInfo(Integer id) {
+		return versionMapper.getAppVersionInfo(id);
+	}
+	@Override
+	public boolean updAppVersionInfo(AppVersion appVersion) {
+		int num=versionMapper.updAppVersion(appVersion);
+		if(num>0) {
+			return true;
+		}else if(num==0) {
+			return false;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean updAppVersionPath(Integer id) {
+		int num=versionMapper.updAppVersionPath(id);
+		if(num>0) {
+			return true;
+		}else if(num==0) {
+			return false;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean delAppVersion(Integer id) {
+		int num=versionMapper.delAppVersion(id);
+		if(num>0) {
+			return true;
+		}else if(num==0) {
+			return false;
+		}else {
+			return false;
+		}
+	}
 
 }
